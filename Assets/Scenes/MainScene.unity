@@ -791,8 +791,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 534669905}
+  rotSpeed: 15
 --- !u!4 &1311518325 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400038, guid: e362cc1e934bb3349b0c62214c3f1cfd,
     type: 3}
   m_PrefabInternal: {fileID: 480026780}
+--- !u!143 &1311518326
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1311518323}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}

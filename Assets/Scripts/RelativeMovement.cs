@@ -1,11 +1,20 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))] //окружающие сктроки показывают контекст размещения метода RequireComponent()
 public class RelativeMovement : MonoBehaviour
 {
     [SerializeField] private Transform target; //ссылка на объект, относительно которого будет происходить перемещение
 
     public float rotSpeed = 15.0f;
+    public float moveSpeed = 6.0f;
+
+    private CharacterController _charController;
+
+    private void Start()
+    {
+        _charController = GetComponent<CharacterController>();
+    }
 
     private void Update()
     {
@@ -15,8 +24,9 @@ public class RelativeMovement : MonoBehaviour
         float vertInput = Input.GetAxis("Vertical");
         if (horInput != 0 || vertInput != 0) //движение обрабатывается только при нажатии клавиш со стрелками
         {
-            movement.x = horInput;
-            movement.z = vertInput;
+            movement.x = horInput * moveSpeed;
+            movement.z = vertInput * moveSpeed;
+            movement = Vector3.ClampMagnitude(movement, moveSpeed); //ограничиваем движение по диагонали той же скоростью, что и движение вдоль оси
 
             Quaternion tmp = target.rotation; //сохраняем начальную ориентацию, чтобы вернуться к ней после завершения работы с целевым объектом
             target.eulerAngles = new Vector3(0, target.eulerAngles.y, 0);
@@ -27,5 +37,8 @@ public class RelativeMovement : MonoBehaviour
             Quaternion direction = Quaternion.LookRotation(movement);
             transform.rotation = Quaternion.Lerp(transform.rotation, direction, rotSpeed * Time.deltaTime); //Lerp = Linear interpolation - интерполяция - плавный переход от одного значения к дургому.
         }
+
+        movement *= Time.deltaTime; //не зависим от фрэймрэйта
+        _charController.Move(movement);
     }
 }
