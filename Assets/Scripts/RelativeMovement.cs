@@ -8,11 +8,18 @@ public class RelativeMovement : MonoBehaviour
 
     public float rotSpeed = 15.0f;
     public float moveSpeed = 6.0f;
+    public float jumpSepeed = 15.0f;
+    public float gravity = -9.8f;
+    public float terminalVelocity = -10.0f;
+    public float minFall = -1.5f;
+
+    private float _vertSpeed;
 
     private CharacterController _charController;
 
     private void Start()
     {
+        _vertSpeed = minFall; // иницилаизируем скорость по вертикали, присваивая ей минимальную скорость падения в начале существования
         _charController = GetComponent<CharacterController>();
     }
 
@@ -38,6 +45,27 @@ public class RelativeMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, direction, rotSpeed * Time.deltaTime); //Lerp = Linear interpolation - интерполяция - плавный переход от одного значения к дургому.
         }
 
+        if (_charController.isGrounded) // isGrounded - проверяет, соприкасается ли контроллер с поверхнустью
+        {
+            if (Input.GetButtonDown("Jump")) //реакция на нажатие прыжка, находясь на поверхности
+            {
+                _vertSpeed = jumpSepeed;
+            }
+            else
+            {
+                _vertSpeed = minFall;
+            }
+        }
+        else // если персонаж не стоит на поверхности, применяем гравитацию, пока не будет достигнута предельная скорость
+        {
+            _vertSpeed += gravity * 5 * Time.deltaTime;
+            if (_vertSpeed < terminalVelocity)
+            {
+                _vertSpeed = terminalVelocity;
+            }
+        }
+
+        movement.y = _vertSpeed;
         movement *= Time.deltaTime; //не зависим от фрэймрэйта
         _charController.Move(movement);
     }
