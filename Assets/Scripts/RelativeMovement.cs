@@ -14,6 +14,7 @@ public class RelativeMovement : MonoBehaviour
     public float minFall = -1.5f;
 
     private float _vertSpeed;
+    private ControllerColliderHit _contact; //нужно для сохранения данных о столкновении между фунциями
 
     private CharacterController _charController;
 
@@ -45,7 +46,16 @@ public class RelativeMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, direction, rotSpeed * Time.deltaTime); //Lerp = Linear interpolation - интерполяция - плавный переход от одного значения к дургому.
         }
 
-        if (_charController.isGrounded) // isGrounded - проверяет, соприкасается ли контроллер с поверхнустью
+        bool hitGround = false;
+        RaycastHit hit;
+
+        if (_vertSpeed < 0 && Physics.Raycast(transform.position, Vector3.down, out hit)) //проверяем, падает ли персонаж
+        {
+            float check = (_charController.height + _charController.radius) / 1.9f; //расстояние, с которым производится сравнение (слегка выходит за нижнюю часть капсулы)
+            hitGround = hit.distance <= check;
+        }
+
+        if (hitGround) //вместо проверки свойства isGrounded - смотрим на результат бросания луча
         {
             if (Input.GetButtonDown("Jump")) //реакция на нажатие прыжка, находясь на поверхности
             {
@@ -63,10 +73,27 @@ public class RelativeMovement : MonoBehaviour
             {
                 _vertSpeed = terminalVelocity;
             }
+
+            if (_charController.isGrounded) //метод бросания луча не обнаруживает поверхности, но капсула с ней соприкасается
+            {
+                if (Vector3.Dot(movement, _contact.normal) < 0) //реакция слегка меняется в зависимости от того, смотрит ли персонаж в сторону точки контака
+                {
+                    movement = _contact.normal * moveSpeed;
+                }
+                else
+                {
+                    movement += _contact.normal * moveSpeed;
+                }
+            }
         }
 
         movement.y = _vertSpeed;
         movement *= Time.deltaTime; //не зависим от фрэймрэйта
         _charController.Move(movement);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit) //при распознавании столкновения данные этого столкновения сохраняются в методе обратного вызова
+    {
+        _contact = hit;
     }
 }
