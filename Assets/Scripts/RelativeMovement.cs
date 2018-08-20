@@ -13,6 +13,7 @@ public class RelativeMovement : MonoBehaviour
     public float terminalVelocity = -10.0f;
     public float minFall = -1.5f;
 
+    private Animator _animator;
     private float _vertSpeed;
     private ControllerColliderHit _contact; //нужно для сохранения данных о столкновении между фунциями
 
@@ -20,6 +21,7 @@ public class RelativeMovement : MonoBehaviour
 
     private void Start()
     {
+        _animator = GetComponent<Animator>();
         _vertSpeed = minFall; // иницилаизируем скорость по вертикали, присваивая ей минимальную скорость падения в начале существования
         _charController = GetComponent<CharacterController>();
     }
@@ -46,6 +48,7 @@ public class RelativeMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, direction, rotSpeed * Time.deltaTime); //Lerp = Linear interpolation - интерполяция - плавный переход от одного значения к дургому.
         }
 
+        _animator.SetFloat("Speed", movement.sqrMagnitude);
         bool hitGround = false;
         RaycastHit hit;
 
@@ -64,6 +67,7 @@ public class RelativeMovement : MonoBehaviour
             else
             {
                 _vertSpeed = minFall;
+                _animator.SetBool("Jumping", false);
             }
         }
         else // если персонаж не стоит на поверхности, применяем гравитацию, пока не будет достигнута предельная скорость
@@ -72,6 +76,11 @@ public class RelativeMovement : MonoBehaviour
             if (_vertSpeed < terminalVelocity)
             {
                 _vertSpeed = terminalVelocity;
+            }
+
+            if (_contact != null)
+            {
+                _animator.SetBool("Jumping", true);
             }
 
             if (_charController.isGrounded) //метод бросания луча не обнаруживает поверхности, но капсула с ней соприкасается
