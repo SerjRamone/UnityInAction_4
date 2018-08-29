@@ -41,4 +41,20 @@ public class InventoryManager : MonoBehaviour, IGameManager
 
         DisplayItems();
     }
+
+    public List<string> GetItemList() //возвращает список всех ключей словаря
+    {
+        List<string> list = new List<string>(_items.Keys);
+        return list;
+    }
+
+    public int GetItemCount(string name) //возвращает количество указанных вещей в инвентаре
+    {
+        if (_items.ContainsKey(name))
+        {
+            return _items[name];
+        }
+
+        return 0;
+    }
 }
