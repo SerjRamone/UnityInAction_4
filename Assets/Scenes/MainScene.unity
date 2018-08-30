@@ -1309,6 +1309,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targets:
   - {fileID: 1377004196}
+  requireKey: 1
 --- !u!1 &730375086
 GameObject:
   m_ObjectHideFlags: 0

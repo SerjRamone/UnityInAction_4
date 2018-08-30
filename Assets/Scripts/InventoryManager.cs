@@ -6,6 +6,8 @@ public class InventoryManager : MonoBehaviour, IGameManager
 {
     public ManagerStatus status { get; private set; } //читаем откуда угодно, но записываем только в этом сценарии
 
+    public string equippedItem { get; private set; }
+
     private Dictionary<string, int> _items;
 
     public void Startup()
@@ -56,5 +58,19 @@ public class InventoryManager : MonoBehaviour, IGameManager
         }
 
         return 0;
+    }
+
+    public bool EquipItem(string name)
+    {
+        if (_items.ContainsKey(name) && equippedItem != name) //проверяем наличие в инвентаре указанного элемента и тот факт, что он ещё не подготовлен к использованию
+        {
+            equippedItem = name;
+            Debug.Log("Equipped " + name);
+            return true;
+        }
+
+        equippedItem = null;
+        Debug.Log("Unequipped");
+        return false;
     }
 }
