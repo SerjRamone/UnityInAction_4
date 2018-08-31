@@ -73,4 +73,24 @@ public class InventoryManager : MonoBehaviour, IGameManager
         Debug.Log("Unequipped");
         return false;
     }
+
+    public bool ConsumeItem(string name)
+    {
+        if (_items.ContainsKey(name)) //проверка наличия элемента в инвентаре
+        {
+            _items[name]--;
+            if (_items[name] == 0) //удаляем запись если количество равно нулю
+            {
+                _items.Remove(name);
+            }
+        }
+        else //в инвентаре нет нужного элемента
+        {
+            Debug.Log("cannot consume " + name);
+            return false;
+        }
+
+        DisplayItems();
+        return true;
+    }
 }
